@@ -1,0 +1,10 @@
+# Nao enviar ao GitHub (dados internos, arquivos locais e temporarios)
+PED - ORIGEM 230kV.xlsx
+*.xlsx
+*.xlsm
+publicar_log.txt
+.claude/
+Thumbs.db
+Desktop.ini
+~$*
+*.tmp
