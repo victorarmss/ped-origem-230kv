@@ -40,19 +40,19 @@ Você salva a PED  ──►  Vigia detecta  ──►  regenera o index.html  �
 
 ## Passo 2 — Enviar esta pasta para o GitHub
 
-Abra o **PowerShell** nesta pasta (Shift + botão direito na pasta → "Abrir janela do PowerShell aqui") e rode, **trocando a URL** pela sua:
+> ✅ **O repositório local já foi criado** (git init + primeiro commit já estão feitos, na branch `main`, com a PED excluída). Você só precisa ligar ao GitHub e dar o push.
+
+Abra o **PowerShell** nesta pasta (Shift + botão direito na pasta → "Abrir janela do PowerShell aqui") e rode, **trocando a URL** pela do seu repositório (Passo 1):
 
 ```powershell
 cd "$env:USERPROFILE\OneDrive - ENGETECNICA\Área de Trabalho\PED Claude"
-git init
-git branch -M main
-git add .
-git commit -m "Primeira versao do dashboard"
 git remote add origin https://github.com/SEU-USUARIO/ped-origem-230kv.git
 git push -u origin main
 ```
 
 No primeiro `push`, o Git **abre o navegador para você entrar no GitHub** — faça o login e autorize. Os arquivos sobem (a planilha PED **não** sobe, está no `.gitignore`).
+
+> Se aparecer "remote origin already exists", rode antes: `git remote remove origin` e repita.
 
 ## Passo 3 — Ligar o GitHub Pages
 
