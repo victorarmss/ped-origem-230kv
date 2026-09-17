@@ -321,8 +321,7 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
   $('macro').innerHTML=[
    {l:'Avanço planejado (contratual)',v:pctPlan+'%',s:planAte+' de '+total+' até '+fmt(REF2),mc:'--slate'},
    {l:'Avanço realizado (emitido)',v:pctReal+'%',s:nEmit+' de '+total+' até '+fmt(REF2),mc:'--green'},
-   {l:'Aprovados / Liberados',v:nApr+' / '+nLib,s:'no ciclo de aprovação',mc:'--dgreen'},
-   {l:'Atrasados',v:atr,s:total?Math.round(atr/total*100)+'% do escopo':'—',mc:'--red'}
+   {l:'Aprovados / Liberados',v:nApr+' / '+nLib,s:'no ciclo de aprovação',mc:'--dgreen'}
   ].map(m=>`<div class="macrobox" style="--mc:${css(m.mc)}"><div class="l">${m.l}</div><div class="v tnum">${m.v}</div><div class="s">${m.s}</div></div>`).join('');
   const G=css('--slate'),Y='#EAB308',B=css('--blue'),O=css('--orange'),GR=css('--green');
    const mkHead=()=>'<colgroup><col style="width:22%"><col span="7"></colgroup><thead><tr>'
