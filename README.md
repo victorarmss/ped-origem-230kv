@@ -15,6 +15,8 @@ Você salva a PED  ──►  Vigia detecta  ──►  regenera o index.html  �
 - **`index.html`** é o dashboard (com os dados da PED embutidos).
 - O **Vigia** (`Vigiar_PED.ps1`) fica rodando na sua máquina monitorando a PED.
 - Ao salvar a PED, ele chama o **`Publicar_Auto.ps1`**, que regenera o `index.html` e faz `git push`.
+
+> 📁 **Local da planilha:** `...\OneDrive - ENGETECNICA\EPC\1700-1701-1702 - ORIGEM\02. Engenharia\01. PED\PED - ORIGEM 230kV.xlsx`. Os scripts (`Atualizar_Dashboard.ps1` e `Vigiar_PED.ps1`) já apontam para lá. O dashboard (`index.html`) e os scripts continuam nesta pasta (`PED Claude`).
 - O **GitHub Pages** publica a nova versão em ~1–2 minutos.
 
 > ⚠️ Como os dados vêm de um **Excel na sua máquina**, o vigia precisa estar **rodando no seu computador**. Não é 100% nuvem.
@@ -107,7 +109,7 @@ Depois de configurado, é só **trabalhar na PED normalmente**. Cada vez que sal
 
 | Arquivo | Função |
 |---|---|
-| `PED - ORIGEM 230kV.xlsx` | A planilha-fonte (fica só na sua máquina) |
+| `PED - ORIGEM 230kV.xlsx` | A planilha-fonte — **fica na pasta `EPC\...\01. PED`**, não nesta pasta; os scripts apontam para lá |
 | `index.html` | O dashboard publicado |
 | `Atualizar_Dashboard.ps1` | Regenera o `index.html` a partir da PED |
 | `Publicar_Auto.ps1` | Regenera + envia ao GitHub (Pages publica) |

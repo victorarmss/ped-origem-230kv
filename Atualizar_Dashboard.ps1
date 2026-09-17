@@ -6,7 +6,7 @@
 param([switch]$NoOpen)
 $ErrorActionPreference='Stop'
 $base = $PSScriptRoot
-$xlsx = Join-Path $base 'PED - ORIGEM 230kV.xlsx'
+$xlsx = Join-Path $env:USERPROFILE 'OneDrive - ENGETECNICA\EPC\1700-1701-1702 - ORIGEM\02. Engenharia\01. PED\PED - ORIGEM 230kV.xlsx'
 $html = Join-Path $base 'index.html'
 if(-not (Test-Path $xlsx)){ Write-Host "ERRO: nao encontrei '$xlsx'" -ForegroundColor Red; return }
 if(-not (Test-Path $html)){ Write-Host "ERRO: nao encontrei '$html'" -ForegroundColor Red; return }

@@ -6,7 +6,7 @@
 #  Para iniciar: use "Iniciar Vigia.cmd".  Para parar: feche esta janela.
 # ==========================================================================
 $base = $PSScriptRoot
-$ped  = Join-Path $base 'PED - ORIGEM 230kV.xlsx'
+$ped  = Join-Path $env:USERPROFILE 'OneDrive - ENGETECNICA\EPC\1700-1701-1702 - ORIGEM\02. Engenharia\01. PED\PED - ORIGEM 230kV.xlsx'
 $pub  = Join-Path $base 'Publicar_Auto.ps1'
 $log  = Join-Path $base 'publicar_log.txt'
 function Log($m){ Add-Content -LiteralPath $log -Value ("[{0}] (vigia) {1}" -f (Get-Date).ToString('dd/MM/yyyy HH:mm:ss'), $m) -Encoding UTF8 }
