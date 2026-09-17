@@ -18,14 +18,14 @@ try{
   $wb = $xl.Workbooks.Open($xlsx,$false,$true)   # read-only
   $ws = $wb.Worksheets.Item('LISTA GERAL')
   $end = $ws.UsedRange.Row + $ws.UsedRange.Rows.Count - 1
-  # Col1=obra Col2=disc Col3=item Col5=descrição Col7=baseline Col9=contratual Col10=reprogramado(DATA PLANEJADA REVISÃO) Col13=STATUS Col14=1a emissão
+  # Col1=obra Col2=disc Col4=descrição Col6=baseline Col8=contratual Col9=reprogramado(DATA PLANEJADA REVISÃO) Col12=STATUS Col14=1a emissão (ITEM removido; Col13=ULTIMA OBSERVACAO)
   $v = $ws.Range($ws.Cells(5,1),$ws.Cells($end,14)).Value2
   $list = New-Object System.Collections.ArrayList
   for($i=1;$i -le ($end-4);$i++){
     $a=$v.GetValue($i,1); if($null -eq $a -or "$a".Trim() -eq ''){continue}
-    $b=$v.GetValue($i,7); $p=$v.GetValue($i,9); $e=$v.GetValue($i,14); $s="$($v.GetValue($i,13))"; $rp=$v.GetValue($i,10)
+    $b=$v.GetValue($i,6); $p=$v.GetValue($i,8); $e=$v.GetValue($i,14); $s="$($v.GetValue($i,12))"; $rp=$v.GetValue($i,9)
     [void]$list.Add([pscustomobject]@{
-      o="$a"; d="$($v.GetValue($i,2))"; it="$($v.GetValue($i,3))"; n="$($v.GetValue($i,5))"
+      o="$a"; d="$($v.GetValue($i,2))"; n="$($v.GetValue($i,4))"
       p= if($p -is [double]){[int]$p}else{$null}
       b= if($b -is [double]){[int]$b}else{$null}
       e= if($e -is [double]){[int]$e}else{$null}
