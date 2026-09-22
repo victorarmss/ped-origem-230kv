@@ -18,16 +18,16 @@ try{
   $wb = $xl.Workbooks.Open($xlsx,$false,$true)   # read-only
   $ws = $wb.Worksheets.Item('LISTA GERAL')
   $end = $ws.UsedRange.Row + $ws.UsedRange.Rows.Count - 1
-  # Col1=obra Col2=disc Col4=descrição Col6=baseline Col8=contratual Col9=reprogramado(DATA PLANEJADA REVISÃO) Col12=STATUS Col14=1a emissão (ITEM removido; Col13=ULTIMA OBSERVACAO)
-  $v = $ws.Range($ws.Cells(5,1),$ws.Cells($end,14)).Value2
+  # Layout 2026-09-22: Col1=obra Col2=disc Col3=empresa Col5=descrição Col6=DATA CRONOGRAMA(prazo) Col7=DATA REPROGRAMADA Col10=STATUS Col11=ULTIMA OBS Col12=1a emissão
+  $v = $ws.Range($ws.Cells(5,1),$ws.Cells($end,12)).Value2
   $list = New-Object System.Collections.ArrayList
   for($i=1;$i -le ($end-4);$i++){
     $a=$v.GetValue($i,1); if($null -eq $a -or "$a".Trim() -eq ''){continue}
-    $b=$v.GetValue($i,6); $p=$v.GetValue($i,8); $e=$v.GetValue($i,14); $s="$($v.GetValue($i,12))"; $rp=$v.GetValue($i,9)
+    $p=$v.GetValue($i,6); $e=$v.GetValue($i,12); $s="$($v.GetValue($i,10))"; $rp=$v.GetValue($i,7)
     [void]$list.Add([pscustomobject]@{
-      o="$a"; d="$($v.GetValue($i,2))"; n="$($v.GetValue($i,4))"
+      o="$a"; d="$($v.GetValue($i,2))"; n="$($v.GetValue($i,5))"
       p= if($p -is [double]){[int]$p}else{$null}
-      b= if($b -is [double]){[int]$b}else{$null}
+      b= $null
       e= if($e -is [double]){[int]$e}else{$null}
       rp= if($rp -is [double]){[int]$rp}else{$null}
       s=$s })
