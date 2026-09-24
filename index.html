@@ -152,6 +152,7 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
  const OBRAS=[{k:'SE UTE Pilar',c:'--orange'},{k:'SE Rio Largo II',c:'--blue'},{k:'Linha de Transmissão',c:'--green'}];
  const DISCS=[{k:'Civil',c:'--blue'},{k:'Emec',c:'--teal'},{k:'Elétrica',c:'--orange'},{k:'Estudos',c:'--purple'},{k:'Planejamento',c:'--slate'},{k:'Terceiros',c:'--amber'}];
  const MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+ const ATUALIZADO='24/09/2026';
  const PXR={months:[46204,46235,46266,46296,46327,46357,46388,46419,46447,46478,46508,46539,46569,46600,46631,46661,46692,46722,46753,46784,46813,46844,46874,46905,46935,46966,46997,47027,47058],prev:{"SE UTE Pilar":[23,16,35,17,85,33,69,34,46,11,17,3,19,10,23,2,2,4,8,1,1,0,0,0,0,0,0,0,0],"SE Rio Largo II":[2,3,2,0,54,18,53,19,61,30,33,17,13,12,22,6,4,4,7,0,0,1,0,0,0,0,0,0,0],"Linha de Transmissão":[0,2,15,0,4,7,11,7,25,0,4,0,6,1,1,0,0,2,0,0,0,0,0,0,0,0,0,0,0]},real:{"SE UTE Pilar":[15,15,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"SE Rio Largo II":[0,3,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"Linha de Transmissão":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}};
  const EPOCH=Date.UTC(1899,11,30),s2d=s=>new Date(EPOCH+s*86400000),ymd2s=(y,m,d)=>Math.round((Date.UTC(y,m-1,d)-EPOCH)/86400000);
  const fmt=s=>{if(s==null||s==='')return'—';const d=s2d(s);return String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+d.getUTCFullYear();};
@@ -341,7 +342,7 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
    const C=(r,s)=>cnt(r,d=>d.es===s);
    const cel=(v)=>`<td style="${v?'font-weight:800':'color:var(--muted)'}">${v}</td>`;
    const buildTable=(keys,totLabel)=>{let body='',gT=[0,0,0,0,0,0,0],any=false;
-    OBRAS.filter(o=>sel.has(o.k)&&keys.indexOf(o.k)>=0).forEach(o=>{const orows=docs.filter(d=>d.o===o.k);if(!orows.length)return;any=true;
+    OBRAS.filter(o=>sel.has(o.k)&&keys.indexOf(o.k)>=0).forEach(o=>{const orows=docs.filter(d=>d.o===o.k&&d.d!=='Planejamento');if(!orows.length)return;any=true;
      body+=`<tr class="obra"><td class="l" colspan="8">${o.k} — ${orows.length} documentos</td></tr>`;let sub=[0,0,0,0,0,0,0];
      DISCS.forEach(di=>{const r=orows.filter(d=>d.d===di.k);if(!r.length)return;
       const qt=r.length,an=C(r,'Em Análise Cliente'),rv=C(r,'Reprovado')+C(r,'Em Revisão Interna'),ac=C(r,'Aprovado c/ Comentários'),ap=C(r,'Aprovado'),lb=C(r,'Liberado para Construção'),em=an+rv+ac+ap+lb;
@@ -354,7 +355,7 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
     return mkHead()+'<tbody>'+body+'</tbody>';};
    $('mtx').innerHTML=buildTable(['SE UTE Pilar','SE Rio Largo II'],'TOTAL SUBESTAÇÕES');
    $('mtxLT').innerHTML=buildTable(['Linha de Transmissão'],'TOTAL LINHA DE TRANSMISSÃO');
-   $('mtxCap').textContent='Atualização: 31/08/2026 · documentos emitidos por situação · EMITIDO = análise na origem + tratativa Engetecnica (soma das colunas de situação) · "atrasado" considera apenas a 1ª emissão.';
+   $('mtxCap').textContent='Atualização: '+ATUALIZADO+' · documentos emitidos por situação · EMITIDO = análise na origem + tratativa Engetecnica (soma das colunas de situação) · "atrasado" considera apenas a 1ª emissão.';
   renderScurve();
   renderList('ob','obraCards',OBRAS,'o','d','Disciplina',DISCS.map(x=>x.k));
   renderList('di','discCards',DISCS,'d','o','Obra',OBRAS.map(x=>x.k));

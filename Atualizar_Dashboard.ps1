@@ -46,6 +46,10 @@ $i1 = $c.IndexOf('const DOCS=')
 $i2 = $c.IndexOf('(function()', $i1)
 if($i1 -lt 0 -or $i2 -lt 0){ Write-Host "ERRO: marcador 'const DOCS=' nao encontrado no HTML." -ForegroundColor Red; return }
 $c = $c.Substring(0,$i1) + 'const DOCS=' + $json + ";`r`n" + $c.Substring($i2)
+# grava a data REAL desta atualizacao na constante ATUALIZADO
+$da = (Get-Date).ToString('dd/MM/yyyy')
+$a1 = $c.IndexOf("const ATUALIZADO='")
+if($a1 -ge 0){ $a2 = $c.IndexOf("';", $a1); if($a2 -gt $a1){ $c = $c.Substring(0,$a1) + "const ATUALIZADO='" + $da + $c.Substring($a2) } }
 $enc = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($html,$c,$enc)
 
