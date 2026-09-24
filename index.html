@@ -161,7 +161,7 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
  const monthBounds=(y,m)=>[ymd2s(y,m,1),ymd2s(m===12?y+1:y,m===12?1:m+1,1)-1];
  let mY=t.getFullYear(),mM=t.getMonth()+1; let REF,REF2; [REF,REF2]=monthBounds(mY,mM);
  const sel=new Set(OBRAS.map(o=>o.k)); let scObra='Geral';
- const statusOf=p=>{if(p==null)return'Sem Data';if(p<REF)return'Atrasado';if(p<=REF2)return'Em Emissão';return'Previsto';};
+ const statusOf=p=>{if(p==null)return'Sem Data';if(p<HOJE)return'Atrasado';if(p<=REF2)return'Em Emissão';return'Previsto';};
  const prazoEf=d=>(d.rp!=null?d.rp:d.p);
  const pill=st=>`<span class="sp ${statCls(st)}">${st}</span>`;
  const cnt=(a,f)=>a.filter(f).length;
@@ -273,7 +273,7 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
   rows.sort((a,b)=>((a.p==null?9e9:a.p)-(b.p==null?9e9:b.p))||((a.rp==null?9e9:a.rp)-(b.rp==null?9e9:b.rp)));
   const nf=st.disc.size||st.stat.size||st.q;
   $('alertCap').textContent=rows.length+' documento(s) · período '+fmt(REF)+' a '+fmt(REF2)+(nf?' · filtros ativos (clique em Limpar para ver tudo)':' · sem filtros');
-  $('alertT').innerHTML=rows.map(d=>`<tr><td>${d.o}</td><td>${d.d}</td><td style="text-align:left;white-space:normal">${d.n}</td><td>${fmt(d.p)}</td><td>${fmt(d.e)}</td><td>${d.rp!=null?'<span style="color:'+css('--amber')+';font-weight:800">'+fmt(d.rp)+'</span>':'—'}</td><td><span class="sp ${statCls(d.es)}">${d.es}</span></td><td class="tnum">${prazoEf(d)!=null?(prazoEf(d)-REF):''}</td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">Nenhum documento com esses filtros.</td></tr>';
+  $('alertT').innerHTML=rows.map(d=>`<tr><td>${d.o}</td><td>${d.d}</td><td style="text-align:left;white-space:normal">${d.n}</td><td>${fmt(d.p)}</td><td>${fmt(d.e)}</td><td>${d.rp!=null?'<span style="color:'+css('--amber')+';font-weight:800">'+fmt(d.rp)+'</span>':'—'}</td><td><span class="sp ${statCls(d.es)}">${d.es}</span></td><td class="tnum">${prazoEf(d)!=null?(prazoEf(d)-HOJE):''}</td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">Nenhum documento com esses filtros.</td></tr>';
  }
  function renderList(pfx,containerId,dim,dimKey,secKey,secLabel,secOrder){
   const st=F[pfx],docs=DOCS.filter(d=>sel.has(d.o)).map(d=>({...d,st:statusOf(prazoEf(d)),es:effStatus(d)}));
@@ -315,8 +315,8 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
   const planAte=cnt(docs,d=>d.p!=null&&d.p<=REF2),pctPlan=total?Math.round(planAte/total*100):0,pctReal=total?Math.round(nEmit/total*100):0;
   $('nowInfo').textContent='mês: '+MES[mM-1]+'/'+mY+'  ·  '+fmt(REF)+' a '+fmt(REF2)+'  ·  '+sel.size+'/3 obras';
   $('kpis').innerHTML=[
-   {l:'Documentos',v:total,s:sel.size+' obra(s)',k:'--headbg'},{l:'Atrasados',v:atr,s:'antes do mês',k:'--red'},
-   {l:'Em Emissão',v:emi,s:'no mês',k:'--emiss'},{l:'Emitidos',v:nEmit,s:pctReal+'% · 1ª emissão até '+MES[mM-1]+'/'+String(mY).slice(2),k:'--green'},
+   {l:'Documentos',v:total,s:sel.size+' obra(s)',k:'--headbg'},{l:'Atrasados',v:atr,s:'vencidos, não emitidos',k:'--red'},
+   {l:'Em Emissão',v:emi,s:'de hoje até fim do mês',k:'--emiss'},{l:'Emitidos',v:nEmit,s:pctReal+'% · 1ª emissão até '+MES[mM-1]+'/'+String(mY).slice(2),k:'--green'},
    {l:'Previsto',v:prev,s:'após o mês',k:'--slate'},{l:'% Planejado',v:pctPlan+'%',s:'contratual até fim do mês',k:'--slate'}
   ].map(k=>`<div class="kpi" style="--k:${css(k.k)||k.k}"><div class="l">${k.l}</div><div class="v tnum">${k.v}</div><div class="s">${k.s}</div></div>`).join('');
   $('macro').innerHTML=[
