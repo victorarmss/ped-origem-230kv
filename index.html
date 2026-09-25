@@ -228,7 +228,9 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
   if(bs.length)s+=poly(B,css('--slate'),true);
   s+=poly(P,css('--orange'),false);
   if(es.length)s+=poly(E,css('--green'),false);
-  months.forEach((mo,i)=>{s+=`<circle class="pt" cx="${xat(i).toFixed(1)}" cy="${yat(P[i]).toFixed(1)}" r="3.2" fill="${css('--orange')}" data-t="${MES[mo.m]}/${String(mo.y).slice(2)} · planejado ${Math.round(P[i])}%${es.length?' · realizado '+Math.round(E[i])+'%':''}"/>`;});
+  months.forEach((mo,i)=>{s+=`<circle class="pt" cx="${xat(i).toFixed(1)}" cy="${yat(P[i]).toFixed(1)}" r="3.2" fill="${css('--orange')}" data-t="${MES[mo.m]}/${String(mo.y).slice(2)} · planejado ${Math.round(P[i])}%${es.length?' · realizado '+Math.round(E[i])+'%':''}"/>`;
+   if(i%stepL===0||i===N-1){s+=`<text x="${xat(i).toFixed(1)}" y="${(yat(P[i])-7).toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="800" fill="${css('--orange')}">${Math.round(P[i])}%</text>`;
+    if(es.length&&E[i]>0)s+=`<text x="${xat(i).toFixed(1)}" y="${(yat(E[i])+14).toFixed(1)}" text-anchor="middle" font-size="8.5" font-weight="800" fill="${css('--green')}">${Math.round(E[i])}%</text>`;}});
   const refFrac=(REF-mn)/((mx-mn)||1),rx=pl+Math.max(0,Math.min(1,refFrac))*iw;
   const rf2=(REF2-mn)/((mx-mn)||1),rx2=pl+Math.max(0,Math.min(1,rf2))*iw;
   const refP=total?docs.filter(d=>d.p!=null&&d.p<=REF).length/total*100:0, refE=total?docs.filter(d=>emitted(d)&&d.e<=REF).length/total*100:0;
@@ -269,7 +271,12 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
      <button class="exp">▼ Ver documentos (${rows.length})</button><div class="detail"><table><thead><tr><th>Documento</th><th>Baseline</th><th>Contratual</th><th>1ª Emissão</th><th>Status</th></tr></thead><tbody>${bo}</tbody></table></div></div>`;}).join('')||'<p style="color:var(--muted)">Nenhum documento com esses filtros.</p>';
   $(containerId).querySelectorAll('.exp').forEach(b=>b.onclick=()=>{const d=b.nextElementSibling;const o=d.classList.toggle('on');b.textContent=o?'▲ Recolher':'▼ Ver documentos';});
  }
- function docTable(container,title,rows){$(container).innerHTML=`<div class="bd-h">${title}</div>`+(rows.length?`<table class="tbl"><thead><tr><th>Obra</th><th>Disc.</th><th>Documento</th><th>Contratual</th><th>Status</th></tr></thead><tbody>`+rows.map(d=>`<tr><td>${d.o}</td><td>${d.d}</td><td style="text-align:left;white-space:normal">${d.n}</td><td>${fmt(d.p)}</td><td>${pill(effStatus(d))}</td></tr>`).join('')+`</tbody></table>`:'<p style="color:var(--muted)">Sem documentos.</p>');}
+ const reprogCell=d=>{if(d.rp==null)return'<span style="color:var(--muted)">—</span>';const df=(d.p!=null)?(d.rp-d.p):null;if(df==null)return fmt(d.rp);const late=df>0,c=late?css('--red'):css('--green');return '<span style="color:'+c+';font-weight:700">'+fmt(d.rp)+'</span> <span style="font-size:10px;color:'+c+'">('+(late?'reprog. +'+df+'d':'antecip. '+df+'d')+')</span>';};
+ const tipoTag=t=>{const c=t==='Realizado'?'--green':(t==='Ambos'?'--emiss':'--blue');return '<span class="sp" style="background:transparent;border:1px solid '+css(c)+';color:'+css(c)+'">'+t+'</span>';};
+ function docTable(container,title,rows){const hasT=rows.some(d=>d._tipo);
+  const head='<tr><th>Obra</th><th>Disc.</th><th>Documento</th>'+(hasT?'<th>Tipo</th>':'')+'<th>Prazo</th><th>Reprogramado</th><th>1ª Emissão</th><th>Status</th></tr>';
+  const body=rows.map(d=>'<tr><td>'+d.o+'</td><td>'+d.d+'</td><td style="text-align:left;white-space:normal">'+d.n+'</td>'+(hasT?'<td>'+tipoTag(d._tipo)+'</td>':'')+'<td>'+fmt(d.p)+'</td><td>'+reprogCell(d)+'</td><td>'+fmt(d.e)+'</td><td>'+pill(effStatus(d))+'</td></tr>').join('');
+  $(container).innerHTML='<div class="bd-h">'+title+'</div>'+(rows.length?'<table class="tbl"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>':'<p style="color:var(--muted)">Sem documentos.</p>');}
  function renderPrevistos(){const st=F.pv;
   const docs=DOCS.filter(d=>sel.has(d.o)).map(d=>({...d,sit:sitEmis(d)}));
   $('pvDisc').querySelectorAll('.chip').forEach(b=>b.dataset.on=st.disc.has(b.dataset.d)?'1':'0');
@@ -346,15 +353,15 @@ const DOCS=[{"o":"SE UTE Pilar","d":"Emec","n":"Arranjo Geral de Equipamentos - 
    const tPrev=items.reduce((a,m)=>a+m.prev,0),tReal=items.reduce((a,m)=>a+m.real,0);
    $('mesCap').textContent='Previsto = plano validado · Realizado = 1ª emissão real · '+tPrev+' previstos · '+tReal+' realizados · clique numa barra p/ ver os emitidos do mês';
    $('mesDetail').innerHTML='<p style="color:var(--muted)">Clique numa barra para listar os documentos emitidos (1ª emissão) naquele mês.</p>';
-   barsGroup($('cMes'),items.length?items:[{lab:'—',prev:0,real:0,a:0,b:0}],680,320,i=>{const m=items[i];if(!m)return;const dd=docs.filter(d=>d.e!=null&&d.e>=m.a&&d.e<m.b);docTable('mesDetail','Emitidos (1ª emissão) em '+m.lab+' — '+dd.length+' doc(s) · previsto no mês: '+m.prev,dd);});})();
+   barsGroup($('cMes'),items.length?items:[{lab:'—',prev:0,real:0,a:0,b:0}],680,320,i=>{const m=items[i];if(!m)return;const pv=docs.filter(d=>d.p!=null&&d.p>=m.a&&d.p<m.b),rl=docs.filter(d=>d.e!=null&&d.e>=m.a&&d.e<m.b),mp=new Map();pv.forEach(d=>mp.set(d.o+'|'+d.n,{...d,_tipo:'Previsto'}));rl.forEach(d=>{const k=d.o+'|'+d.n;mp.has(k)?mp.get(k)._tipo='Ambos':mp.set(k,{...d,_tipo:'Realizado'});});const all=[...mp.values()];docTable('mesDetail','Documentos de '+m.lab+' — previsto '+m.prev+' · realizado '+m.real+' · '+all.length+' na lista',all);});})();
   (function(){const data=OBRAS.filter(o=>sel.has(o.k)).map(o=>({n:o.k,v:cnt(docs,d=>d.o===o.k),c:css(o.c)}));const W=360,H=300,pl=118,pr=44,pt=20,pb=20,iw=W-pl-pr,ih=H-pt-pb;const max=Math.max(...data.map(d=>d.v),1);
    const bh=Math.min(46,ih/Math.max(data.length,1)*.6),gap=ih/Math.max(data.length,1);let s='';data.forEach((d,i)=>{const y=pt+i*gap+(gap-bh)/2,w=(d.v/max)*iw;
     s+=`<text x="${pl-10}" y="${(y+bh/2+4).toFixed(1)}" text-anchor="end" font-size="11" fill="${css('--ink')}">${d.n}</text>`;
     s+=`<rect class="bar" x="${pl}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${bh}" rx="4" fill="${d.c}" data-t="${d.n}: ${d.v}"/>`;
     s+=`<text x="${(pl+w+8).toFixed(1)}" y="${(y+bh/2+4).toFixed(1)}" font-size="12" font-weight="700" fill="${css('--ink')}">${d.v}</text>`;});$('cObra').innerHTML=s;wire($('cObra'));})();
-  (function(){const mon=REF-(isoDow(REF)-1);const wk=[];for(let w=0;w<12;w++){const a=mon+w*7,b=a+6;const dp=docs.filter(d=>d.p!=null&&d.p>=a&&d.p<=b);const dr=docs.filter(d=>d.e!=null&&d.e>=a&&d.e<=b);wk.push({lab:fmt(a).slice(0,5),prev:dp.length,real:dr.length,docsP:dp,a,b});}
+  (function(){const mon=REF-(isoDow(REF)-1);const wk=[];for(let w=0;w<12;w++){const a=mon+w*7,b=a+6;const dp=docs.filter(d=>d.p!=null&&d.p>=a&&d.p<=b);const dr=docs.filter(d=>d.e!=null&&d.e>=a&&d.e<=b);wk.push({lab:fmt(a).slice(0,5),prev:dp.length,real:dr.length,dp:dp,dr:dr,a,b});}
    $('semDetail').innerHTML='<p style="color:var(--muted)">Clique numa barra para listar os documentos previstos (contratual) daquela semana.</p>';
-   barsGroup($('cSem'),wk,900,280,i=>docTable('semDetail','Semana '+fmt(wk[i].a)+' a '+fmt(wk[i].b)+' — previsto '+wk[i].prev+' · realizado '+wk[i].real,wk[i].docsP));})();
+   barsGroup($('cSem'),wk,900,280,i=>{const w=wk[i],mp=new Map();w.dp.forEach(d=>mp.set(d.o+'|'+d.n,{...d,_tipo:'Previsto'}));w.dr.forEach(d=>{const k=d.o+'|'+d.n;mp.has(k)?mp.get(k)._tipo='Ambos':mp.set(k,{...d,_tipo:'Realizado'});});const all=[...mp.values()];docTable('semDetail','Semana '+fmt(w.a)+' a '+fmt(w.b)+' — previsto '+w.prev+' · realizado '+w.real+' · '+all.length+' na lista',all);});})();
   renderAlerts();
  }
  render();
