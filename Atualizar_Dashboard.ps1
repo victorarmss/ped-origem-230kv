@@ -23,7 +23,10 @@ try{
   $list = New-Object System.Collections.ArrayList
   for($i=1;$i -le ($end-4);$i++){
     $a=$v.GetValue($i,1); if($null -eq $a -or "$a".Trim() -eq ''){continue}
-    $p=$v.GetValue($i,6); $e=$v.GetValue($i,12); $s="$($v.GetValue($i,10))"; $rp=$v.GetValue($i,7); $ua=$v.GetValue($i,13)
+    $p=$v.GetValue($i,6); $e=$v.GetValue($i,12); $s="$($v.GetValue($i,10))".Trim(); $rp=$v.GetValue($i,7); $ua=$v.GetValue($i,13)
+    if($s -match '^(?i)cancel'){continue}            # cancelados nao contam em nada
+    if($s -match '^-?\d+$'){$s='Previsto'}             # erro de formula (#N/D) -> Previsto
+    if($s -match '^(?i)informativ'){$s='Aprovado'}    # Informativo = Aprovado
     [void]$list.Add([pscustomobject]@{
       o="$a"; d="$($v.GetValue($i,2))"; n="$($v.GetValue($i,5))"; uo="$($v.GetValue($i,11))"
       p= if($p -is [double]){[int]$p}else{$null}
